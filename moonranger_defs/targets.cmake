@@ -66,47 +66,46 @@
 #       not specified then it will be assumed as "default <cpuname>".
 #
 
+include(${MISSION_SOURCE_DIR}/moonranger_defs/apps.cmake)
+
 # The MISSION_NAME will be compiled into the target build data structure
 # as well as being passed to "git describe" to filter the tags when building
 # the version string.
-SET(MISSION_NAME "SampleMission")
+SET(MISSION_NAME "MoonRanger")
 
 # SPACECRAFT_ID gets compiled into the build data structure and the PSP may use it.
 # should be an integer.
-SET(SPACECRAFT_ID 0x42)
+SET(SPACECRAFT_ID 0x00)
 
-# The "MISSION_CORE_MODULES" will be built and statically linked as part
-# of the CFE core executable on every target.  These can be used to amend
-# or override parts of the CFE core on a mission-specific basis.
-#list(APPEND MISSION_CORE_MODULES mymodule)
-
-# The "MISSION_GLOBAL_APPLIST" is a set of apps/libs that will be built
-# for every defined and target.  These are built as dynamic modules
-# and must be loaded explicitly via startup script or command.
-# This list is effectively appended to every TGTx_APPLIST in targets.cmake.
-# Example:
-list(APPEND MISSION_GLOBAL_APPLIST sample_app sample_lib)
-
-# The "MISSION_GLOBAL_STATIC_APPLIST" is similar to MISSION_GLOBAL_APPLIST
-# but the apps are statically linked.
-# This list is effectively appended to every TGTx_STATIC_APPLIST in targets.cmake.
-# Example:
-#   list(APPEND MISSION_GLOBAL_STATIC_APPLIST my_static_app)
+# UI_INSTALL_SUBDIR indicates where the UI data files (included in some apps) should
+# be copied during the install process.
+SET(UI_INSTALL_SUBDIR "host/ui")
 
 # FT_INSTALL_SUBDIR indicates where the black box test data files (lua scripts) should
 # be copied during the install process.
 SET(FT_INSTALL_SUBDIR "host/functional-test")
 
 # Each target board can have its own HW arch selection and set of included apps
-SET(MISSION_CPUNAMES cpu1)
+SET(TGT1_NAME cpu1)
+SET(TGT1_APPLIST ${APPS2RUN})
 
-SET(cpu1_PROCESSORID 1)
-SET(cpu1_APPLIST ci_lab to_lab sch_lab)
-SET(cpu1_FILELIST cfe_es_startup.scr)
+execute_process(COMMAND python ${MISSION_SOURCE_DIR}/Python/cFS_Utils/ConfigureApps.py ${MISSION_SOURCE_DIR}/apps ${CMAKE_INSTALL_PREFIX}/cpu1/cf ${APPS2RUN})
 
-# CPU2 example.  This is not built by default anymore but
-# serves as an example of how one would configure multiple cpus.
-SET(cpu2_PROCESSORID 2)
-SET(cpu2_APPLIST ci_lab to_lab sch_lab)
-SET(cpu2_FILELIST cfe_es_startup.scr)
+foreach(appname ${APPS2RUN})
+  string(TOUPPER ${appname} APPNAME)
+  add_definitions("-DAPPDEF_${APPNAME}")
+  message(STATUS "Adding definition APPDEF_${APPNAME}")
+endforeach(appname ${APPS2RUN})
 
+#SET(TGT1_APPLIST scheduler ardupilot gsInterface rotorsim geofence traffic trajectory guidance cognition logger)
+#SET(TGT1_FILELIST cfe_es_startup.scr)
+
+# CPU2/3 are duplicates of CPU1.  These are not built by default anymore but are
+# commented out to serve as an example of how one would configure multiple cpus.
+#SET(TGT2_NAME cpu2)
+#SET(TGT2_APPLIST sample_app ci_lab to_lab sch_lab)
+#SET(TGT2_FILELIST cfe_es_startup.scr)
+
+#SET(TGT3_NAME cpu3)
+#SET(TGT3_APPLIST sample_app ci_lab to_lab sch_lab)
+#SET(TGT3_FILELIST cfe_es_startup.scr)

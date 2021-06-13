@@ -34,8 +34,8 @@
  *
  */
 
-#ifndef SAMPLE_MISSION_CFG_H
-#define SAMPLE_MISSION_CFG_H
+#ifndef MOONRANGER_MISSION_CFG_H
+#define MOONRANGER_MISSION_CFG_H
 
 /**
 **  \cfesbcfg Maximum SB Message Size
