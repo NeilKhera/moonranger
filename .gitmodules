@@ -1,0 +1,9 @@
+[submodule "cFE"]
+	path = cFE
+	url = https://github.com/nasa/cFE.git
+[submodule "osal"]
+	path = osal
+	url = https://github.com/nasa/osal.git
+[submodule "PSP"]
+	path = PSP
+	url = https://github.com/nasa/PSP.git
